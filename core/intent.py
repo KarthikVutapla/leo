@@ -25,17 +25,24 @@ def detect_intent(text):
         ],
 
         "git_status": [
-            "git status",
             "check status",
-            "repo status",
-            "what changed"
+            "git status",
+            "what changed",
+            "repo status"
+        ],
+
+        "help": [
+            "what can you do",
+            "what can you do leo",
+            "help me",
+            "rio what can you do"
         ],
 
         "exit": [
             "bye leo",
-            "exit",
             "shutdown",
-            "stop leo"
+            "stop leo",
+            "exit"
         ]
     }
 
