@@ -1,120 +1,58 @@
-from speech import listen
-from core.intent import detect_intent
-from core.storage import log_entry
-from core.github import status
-import os
+from ui.jarvis_ui import JarvisUI
+from core.voice import listen_audio
+from core.tts import speak
+import threading
 
-current_category = None
+ui = JarvisUI()
 
-
-def show_help():
-    print("\n========= LEO COMMANDS =========\n")
-
-    print("🟢 CATEGORY")
-    print("- create category / make category")
-    print("  → creates a new folder and stores items\n")
-
-    print("🟡 LOGGING")
-    print("- normal speech (no command)")
-    print("  → stores in daily memory file\n")
-
-    print("🔵 GITHUB")
-    print("- push this / sync repo")
-    print("  → asks for commit message, then pushes to GitHub\n")
-
-    print("- check status")
-    print("  → shows git status\n")
-
-    print("🔴 EXIT")
-    print("- bye leo / shutdown")
-    print("  → exits program\n")
-
-    print("==============================\n")
+active = False
 
 
-def create_category_flow():
-    global current_category
-
-    print("Say category name")
-
-    name = listen()
-    if not name:
-        return
-
-    name = name.lower().strip()
-    current_category = name
-
-    os.makedirs(f"categories/{name}", exist_ok=True)
-
-    print(f"Category created: {name}")
-    print("Speak items. Say 'that's all' to finish")
+def brain_loop():
+    global active
 
     while True:
-        text = listen()
+        text, volume = listen_audio()
+
+        if volume:
+            ui.update_wave(volume)
 
         if not text:
             continue
 
-        print(">>", text)
+        lower = text.lower()
 
-        if "that" in text.lower():
-            break
+        # WAKE WORD (ANY leo mention)
+        if not active:
+            if "leo" in lower:
+                active = True
+                ui.set_text("LEO ACTIVATED")
+                speak("Yes")
+            continue
 
-        log_entry({
-            "type": "category_item",
-            "category": current_category,
-            "text": text
-        })
+        # PAUSE
+        if "pause" in lower:
+            active = False
+            ui.set_text("LEO PAUSED")
+            speak("Paused")
+            continue
+
+        ui.set_text(text)
+
+        # SIMPLE RESPONSES (expand later)
+        if "hello" in lower:
+            speak("Hello")
+
+        elif "how are you" in lower:
+            speak("I am fine")
+
+        elif "your name" in lower:
+            speak("I am Leo")
+
+        else:
+            speak("Done")
 
 
-def log_mode(text):
-    log_entry({
-        "type": "log",
-        "text": text
-    })
+threading.Thread(target=brain_loop, daemon=True).start()
 
-    print("Logged:", text)
-
-
-print("LEO ACTIVE")
-
-while True:
-    text = listen()
-
-    if not text:
-        continue
-
-    print("YOU:", text)
-
-    intent = detect_intent(text)
-
-    if intent == "create_category":
-        create_category_flow()
-
-    elif intent == "git_push":
-        print("What should be the commit message?")
-
-        msg = listen()
-
-        if not msg:
-            msg = "Leo update"
-
-        print("Committing with message:", msg)
-
-        os.system("git add .")
-        os.system(f'git commit -m "{msg}"')
-        os.system("git push")
-
-    elif intent == "git_status":
-        print("Repo status:")
-        status()
-
-    elif intent == "help":
-        show_help()
-
-    elif intent == "exit":
-        print("Shutting down Leo...")
-        break
-
-    else:
-        log_mode(text)
+ui.run()
