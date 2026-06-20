@@ -1,7 +1,7 @@
 from speech import listen
 from core.intent import detect_intent
 from core.storage import log_entry
-from core.github import push, status
+from core.github import status
 import os
 
 current_category = None
@@ -12,8 +12,7 @@ def show_help():
 
     print("🟢 CATEGORY")
     print("- create category / make category")
-    print("  → creates a new folder")
-    print("  → then you add items by speaking\n")
+    print("  → creates a new folder and stores items\n")
 
     print("🟡 LOGGING")
     print("- normal speech (no command)")
@@ -21,7 +20,7 @@ def show_help():
 
     print("🔵 GITHUB")
     print("- push this / sync repo")
-    print("  → git add + commit + push\n")
+    print("  → asks for commit message, then pushes to GitHub\n")
 
     print("- check status")
     print("  → shows git status\n")
@@ -93,8 +92,18 @@ while True:
         create_category_flow()
 
     elif intent == "git_push":
-        print("Pushing to GitHub...")
-        push()
+        print("What should be the commit message?")
+
+        msg = listen()
+
+        if not msg:
+            msg = "Leo update"
+
+        print("Committing with message:", msg)
+
+        os.system("git add .")
+        os.system(f'git commit -m "{msg}"')
+        os.system("git push")
 
     elif intent == "git_status":
         print("Repo status:")
