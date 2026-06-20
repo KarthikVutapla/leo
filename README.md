@@ -4,12 +4,6 @@ LEO is a personal voice-based system designed to capture, structure, and organiz
 
 ---
 
-# LEO — Voice Commands Guide
-
-LEO is a voice-controlled assistant. You speak naturally, and it detects intent to log data, create categories, or manage GitHub actions.
-
----
-
 # 🟢 CATEGORY CREATION COMMANDS
 
 ## 🎙️ Create a Category
