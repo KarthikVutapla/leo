@@ -4,6 +4,111 @@ LEO is a personal voice-based system designed to capture, structure, and organiz
 
 ---
 
+# LEO — Voice Commands Guide
+
+LEO is a voice-controlled assistant. You speak naturally, and it detects intent to log data, create categories, or manage GitHub actions.
+
+---
+
+# 🟢 CATEGORY CREATION COMMANDS
+
+## 🎙️ Create a Category
+Say anything like:
+- “create category”
+- “make a category”
+- “I want a category”
+- “help me create a category”
+
+### What happens:
+LEO asks for a category name and creates a folder for it.
+
+---
+
+## 🎙️ Add Items to Category
+After category is created, speak items one by one:
+- “python”
+- “cs50”
+- “github”
+
+### Stop commands:
+- “that’s all”
+- “stop leo”
+- “shutdown”
+
+### What happens:
+Each spoken item is saved under that category.
+
+---
+
+# 🟡 GENERAL LOGGING
+
+## 🎙️ Log any activity
+Just speak normally:
+- “I studied CS50 week 1”
+- “I went to gym”
+- “week 1 week 2 week 3”
+
+### What happens:
+LEO stores everything in a structured daily log file automatically.
+
+---
+
+# 🔵 GITHUB COMMANDS
+
+## 🎙️ Push to GitHub
+Say:
+- “push this”
+- “sync repo”
+- “commit this”
+- “save to github”
+
+### What happens:
+LEO runs:
+- git add .
+- git commit
+- git push
+
+---
+
+## 🎙️ Check repository status
+Say:
+- “check status”
+- “git status”
+- “what changed”
+
+### What happens:
+LEO runs:
+- git status (shows current repository state)
+
+---
+
+# 🔴 EXIT COMMANDS
+
+Say:
+- “bye leo”
+- “shutdown”
+- “stop leo”
+
+### What happens:
+LEO safely exits the program.
+
+---
+
+# 🧠 HOW LEO THINKS
+
+- Understands natural speech (not strict commands)
+- Detects intent (category / logging / git / exit)
+- Automatically stores data locally
+- Can sync with GitHub when requested
+
+---
+
+# ⚠️ NOTES
+
+- Speak clearly for best recognition
+- Internet required for speech-to-text
+- GitHub must be authenticated before push works
+
 ## Features (upcoming)
 
 - [ ]  Voice input to text logging 
