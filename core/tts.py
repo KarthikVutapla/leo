@@ -1,8 +1,4 @@
-import pyttsx3
-
-engine = pyttsx3.init()
-engine.setProperty("rate", 175)
+import os
 
 def speak(text):
-    engine.say(text)
-    engine.runAndWait()
+    os.system(f'say "{text}"')

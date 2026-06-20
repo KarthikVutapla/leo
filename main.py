@@ -1,58 +1,127 @@
-from ui.jarvis_ui import JarvisUI
-from core.voice import listen_audio
+from core.voice import listen
 from core.tts import speak
+from core.storage import log_entry
+from core.github import push, status
+from brain.intent import detect_intent
+from ui.jarvis_ui import UI
 import threading
+import os
 
-ui = JarvisUI()
+ui = UI()
 
-active = False
+session_active = False
 
 
-def brain_loop():
-    global active
+def voice_loop():
+    global session_active
 
     while True:
-        text, volume = listen_audio()
-
-        if volume:
-            ui.update_wave(volume)
-
+        text = listen()
         if not text:
             continue
 
         lower = text.lower()
+        ui.update(text)
 
-        # WAKE WORD (ANY leo mention)
-        if not active:
+        # WAKE
+        if not session_active:
             if "leo" in lower:
-                active = True
-                ui.set_text("LEO ACTIVATED")
-                speak("Yes")
+                session_active = True
+                speak("activated")
             continue
 
         # PAUSE
         if "pause" in lower:
-            active = False
-            ui.set_text("LEO PAUSED")
-            speak("Paused")
+            session_active = False
+            speak("paused")
             continue
 
-        ui.set_text(text)
+        print("YOU:", text)
 
-        # SIMPLE RESPONSES (expand later)
-        if "hello" in lower:
-            speak("Hello")
+        intent = detect_intent(text)
 
-        elif "how are you" in lower:
-            speak("I am fine")
+        # CATEGORY SYSTEM
+        if intent == "category_add":
+            speak("say category name")
+            name = listen()
 
-        elif "your name" in lower:
-            speak("I am Leo")
+            if not name:
+                continue
 
+            name = name.lower().strip()
+            os.makedirs(f"categories/{name}", exist_ok=True)
+
+            speak("start speaking items, say that's all to stop")
+
+            items = []
+
+            while True:
+                item = listen()
+                if not item:
+                    continue
+
+                ui.update(item)
+
+                if "that's all" in item.lower():
+                    break
+
+                items.append(item)
+
+            with open(f"categories/{name}.txt", "a") as f:
+                f.write("\n".join(items))
+
+            speak("category saved")
+
+        # GITHUB PUSH
+        elif intent == "git_push":
+            speak("commit message?")
+            msg = listen() or "leo update"
+            push(msg)
+            speak("pushed")
+
+        # GITHUB STATUS
+        elif intent == "git_status":
+            status()
+
+        # README UPDATE
+        elif intent == "readme":
+            speak("say readme content")
+
+            lines = []
+
+            while True:
+                line = listen()
+                if not line:
+                    continue
+
+                ui.update(line)
+
+                if "that's all" in line.lower():
+                    break
+
+                lines.append(line)
+
+            with open("README.md", "a") as f:
+                f.write("\n" + "\n".join(lines) + "\n")
+
+            speak("readme updated")
+
+        # HELP
+        elif intent == "help":
+            print("\n===== LEO OS COMMANDS =====")
+            print("leo → activate")
+            print("pause → stop system")
+            print("create category → category mode")
+            print("push this → git push")
+            print("check status → git status")
+            print("update readme → edit readme")
+            print("===========================\n")
+
+        # LOG
         else:
-            speak("Done")
+            log_entry({"text": text})
 
 
-threading.Thread(target=brain_loop, daemon=True).start()
+threading.Thread(target=voice_loop, daemon=True).start()
 
 ui.run()

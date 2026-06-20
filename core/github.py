@@ -1,8 +1,8 @@
 import os
 
-def push():
+def push(msg):
     os.system("git add .")
-    os.system('git commit -m "Leo update"')
+    os.system(f'git commit -m "{msg}"')
     os.system("git push")
 
 def status():

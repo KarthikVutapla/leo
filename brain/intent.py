@@ -7,42 +7,43 @@ def detect_intent(text):
     text = text.lower()
 
     patterns = {
-        "create_category": [
+        "category_add": [
             "create category",
             "make category",
             "add category",
-            "new category",
-            "i want a category",
-            "help me create a category"
+            "new category"
         ],
 
         "git_push": [
             "push this",
-            "push to github",
-            "commit this",
             "sync repo",
+            "commit this",
             "save to github"
         ],
 
         "git_status": [
             "check status",
             "git status",
-            "what changed",
-            "repo status"
+            "what changed"
+        ],
+
+        "readme": [
+            "update readme",
+            "edit readme",
+            "add to readme"
         ],
 
         "help": [
             "what can you do",
-            "what can you do leo",
             "help me",
-            "rio what can you do"
+            "leo what can you do",
+            "what are your commands"
         ],
 
         "exit": [
             "bye leo",
             "shutdown",
-            "stop leo",
-            "exit"
+            "stop leo"
         ]
     }
 
